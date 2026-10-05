@@ -1,0 +1,13 @@
+{
+  "name": "mc-skills",
+  "description": "Minecraft modding skills for Claude Code",
+  "owner": { "name": "Wyatt Redmond" },
+  "plugins": [
+    {
+      "name": "minecraft-modding",
+      "source": ".",
+      "displayName": "Minecraft Modding",
+      "description": "Port, write, or debug Minecraft mods across loader/version changes (Fabric/Forge/NeoForge); tuned for Minecraft 26.x+."
+    }
+  ]
+}
