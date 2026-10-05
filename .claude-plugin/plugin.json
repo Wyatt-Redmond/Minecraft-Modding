@@ -1,0 +1,9 @@
+{
+  "name": "minecraft-modding",
+  "displayName": "Minecraft Modding",
+  "version": "1.0.0",
+  "description": "Port, write, or debug Minecraft mods across loader/version changes (Fabric/Forge/NeoForge); tuned for Minecraft 26.x+.",
+  "author": { "name": "Wyatt Redmond" },
+  "license": "MIT",
+  "keywords": ["minecraft", "modding", "fabric", "forge", "neoforge", "architectury", "geckolib"]
+}
