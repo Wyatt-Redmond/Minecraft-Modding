@@ -3,7 +3,14 @@
   "displayName": "Minecraft Modding",
   "version": "1.0.0",
   "description": "Port, write, or debug Minecraft mods across loader/version changes (Fabric/Forge/NeoForge); tuned for Minecraft 26.x+.",
-  "author": { "name": "Wyatt Redmond" },
+  "author": {
+    "name": "Wyatt Redmond"
+  },
   "license": "MIT",
+  "icon": ".claude-plugin/icon.png",
+  "homepage": "https://github.com/Wyatt-Redmond/Minecraft-Modding",
+  "repository": "https://github.com/Wyatt-Redmond/Minecraft-Modding",
+  "documentationUrl": "https://github.com/Wyatt-Redmond/Minecraft-Modding#readme",
+  "supportUrl": "https://github.com/Wyatt-Redmond/Minecraft-Modding/issues",
   "keywords": ["minecraft", "modding", "fabric", "forge", "neoforge", "architectury", "geckolib"]
 }
