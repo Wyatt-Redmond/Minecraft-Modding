@@ -1,8 +1,8 @@
 {
   "name": "minecraft-modding",
   "displayName": "Minecraft Modding",
-  "version": "1.0.0",
-  "description": "Port, write, or debug Minecraft mods across loader/version changes (Fabric/Forge/NeoForge); tuned for Minecraft 26.x+.",
+  "version": "1.1.0",
+  "description": "Port, write, or debug Minecraft mods (Fabric/Forge/NeoForge) — a version-agnostic porting method worked in depth for the 1.21.x -> 26.2/26.3 jump; older MC versions (1.x) get orientation, not per-version depth. Ships a bundled bake-validator for purple/invisible assets.",
   "author": {
     "name": "Wyatt Redmond"
   },
