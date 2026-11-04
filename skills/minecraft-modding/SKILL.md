@@ -1,9 +1,10 @@
 ---
 name: minecraft-modding
 description: >-
-  Port, write, or debug Minecraft mods — especially across a game-version or
-  mod-loader change (Forge/NeoForge → Fabric, old Fabric forward, 1.21.x → 26.2),
-  or building a new multiloader mod from scratch. Use when the task involves
+  Port, write, or debug Minecraft mods, or build a new multiloader mod from scratch —
+  a version-agnostic porting method worked in depth for the 1.21.x Forge/NeoForge →
+  26.2/26.3 Fabric jump; older MC eras (1.x) get orientation, not per-version depth.
+  Use when the task involves
   porting a mod to a new MC version or loader, setting up Gradle/Loom for a mod,
   the Architectury common/fabric/forge/neoforge layout, cross-loader registration
   / networking / menus, the retained-mode GUI rewrite (GuiGraphics → extract),
@@ -131,13 +132,31 @@ Each stage is blind to what the previous one catches:
    grep the log for `FAILED during APPLY | was not applied` after *every* fix (faults surface in waves)
 3. **Static mixin audit** (name-level only; misses `@At` descriptor mismatches)
 4. **Client mixins are a server-boot BLIND SPOT** — validate each against the merged jar, or test on a real client
-5. **Bake gate** (resolves blockstate → model → parent → textures; the objective purple/invisible check)
+5. **Bake gate** — run the bundled `scripts/bake_validate.py` (resolves blockstate → model → parent → textures; the objective purple/invisible check). See **Bundled scripts** below.
 6. **Creative-inventory icon test** (26.2 needs a separate `assets/<ns>/items/<name>.json` def)
 7. **RCON phantom scan** — `execute if block <pos> <id>` throws `Unknown block type` for unregistered ids
 8. **In-client QA** — the last mile; boot-to-Done never exercises rendering
 
 Three "it works" illusions live here (green compile, boot-to-Done, asset-chain
 verify) — each necessary, none sufficient. Detail: [porting-playbook.md](references/porting-playbook.md) §7.
+
+## Bundled scripts
+
+Deterministic checks that ship *with* the skill — run them, don't reconstruct them. Each
+is stdlib-only and runnable via `Bash(python ${CLAUDE_SKILL_DIR}/scripts/<name>)`.
+
+| Script | What it does | Run |
+|---|---|---|
+| `scripts/bake_validate.py` | The **bake gate**: resolves blockstate → model → parent → texture across a layered view (folders and/or jars) and flags assets that bake **purple/invisible** (missing model/texture, custom `"loader":` with no geometry, missing `items/` def, illegal `builtin/entity`). | `python scripts/bake_validate.py <pack-or-jar-or-mods-folder> --mc-version 26.3` (add `--json`; `--selftest` runs its own assertions) |
+
+**Standing rule — TESTED vs UNVERIFIED.** The bundled validators carry a *verified* era
+ruleset only for the versions listed in their `VERIFIED_VERSIONS` (currently 26.1–26.3, mirroring
+[version-baselines.md](references/version-baselines.md)). On any other `--mc-version` the tool runs
+its **universal** checks authoritatively but prints era-specific findings as **UNVERIFIED advisories**
+— trust the universal results, but confirm each era-gated finding against the target jar (the `javap`
+method) before acting. **If you verify a new version, add it to `VERIFIED_VERSIONS` so the trusted
+ground grows by evidence, never by guessing.** This is the same honesty rule the whole skill runs on,
+applied to the tooling: never let a tool emit a confident verdict for a version it hasn't been proven on.
 
 ## References
 
