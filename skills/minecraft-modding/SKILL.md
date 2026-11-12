@@ -132,7 +132,7 @@ Each stage is blind to what the previous one catches:
    grep the log for `FAILED during APPLY | was not applied` after *every* fix (faults surface in waves)
 3. **Static mixin audit** (name-level only; misses `@At` descriptor mismatches)
 4. **Client mixins are a server-boot BLIND SPOT** — validate each against the merged jar, or test on a real client
-5. **Bake gate** — run the bundled `scripts/bake_validate.py` (resolves blockstate → model → parent → textures; the objective purple/invisible check). See **Bundled scripts** below.
+5. **Bake gate** — the objective purple/invisible check (resolves blockstate → model → parent → textures). The validator ships as source in [bake-validate.md](references/bake-validate.md); recreate it to `scripts/bake_validate.py` and run it. See **The bake gate** below.
 6. **Creative-inventory icon test** (26.2 needs a separate `assets/<ns>/items/<name>.json` def)
 7. **RCON phantom scan** — `execute if block <pos> <id>` throws `Unknown block type` for unregistered ids
 8. **In-client QA** — the last mile; boot-to-Done never exercises rendering
@@ -140,17 +140,22 @@ Each stage is blind to what the previous one catches:
 Three "it works" illusions live here (green compile, boot-to-Done, asset-chain
 verify) — each necessary, none sufficient. Detail: [porting-playbook.md](references/porting-playbook.md) §7.
 
-## Bundled scripts
+## The bake gate
 
-Deterministic checks that ship *with* the skill — run them, don't reconstruct them. Each
-is stdlib-only and runnable via `Bash(python ${CLAUDE_SKILL_DIR}/scripts/<name>)`.
+A deterministic purple/invisible check that ships **as source** with the skill — in
+[bake-validate.md](references/bake-validate.md), not as a pre-placed executable (the directory
+only accepts scripts from verified orgs). Recreate it once, then run it; don't reconstruct the
+logic from scratch.
 
-| Script | What it does | Run |
-|---|---|---|
-| `scripts/bake_validate.py` | The **bake gate**: resolves blockstate → model → parent → texture across a layered view (folders and/or jars) and flags assets that bake **purple/invisible** (missing model/texture, custom `"loader":` with no geometry, missing `items/` def, illegal `builtin/entity`). | `python scripts/bake_validate.py <pack-or-jar-or-mods-folder> --mc-version 26.3` (add `--json`; `--selftest` runs its own assertions) |
+1. **Recreate it** — write the code block in [bake-validate.md](references/bake-validate.md)
+   to `scripts/bake_validate.py` in the skill folder (Claude can do this on request). stdlib-only Python 3, nothing to install.
+2. **Run it** — `python scripts/bake_validate.py <pack-or-jar-or-mods-folder> --mc-version 26.3`
+   (add `--json`; `--selftest` runs its own assertions). It resolves blockstate → model → parent →
+   texture across a layered view (folders and/or jars) and flags assets that bake **purple/invisible**
+   (missing model/texture, custom `"loader":` with no geometry, missing `items/` def, illegal `builtin/entity`).
 
-**Standing rule — TESTED vs UNVERIFIED.** The bundled validators carry a *verified* era
-ruleset only for the versions listed in their `VERIFIED_VERSIONS` (currently 26.1–26.3, mirroring
+**Standing rule — TESTED vs UNVERIFIED.** The validator carries a *verified* era ruleset only for the
+versions listed in its `VERIFIED_VERSIONS` (currently 26.1–26.3, mirroring
 [version-baselines.md](references/version-baselines.md)). On any other `--mc-version` the tool runs
 its **universal** checks authoritatively but prints era-specific findings as **UNVERIFIED advisories**
 — trust the universal results, but confirm each era-gated finding against the target jar (the `javap`
@@ -168,6 +173,7 @@ applied to the tooling: never let a tool emit a confident verdict for a version 
 | [official-docs-and-primers.md](references/official-docs-and-primers.md) | Official sources + the canonical per-loader toolchain (Fabric Loom · Forge ForgeGradle/MDK · NeoForge ModDevGradle), dev-mappings/metadata/entrypoint/registration per loader, Yarn-EOL migration tooling, the Java ladder, and the **NeoForge primer chain** (1.21.11→26.1→26.2→26.3) — the authoritative cross-loader source for the semantic vanilla deltas `javap` can't reveal. |
 | [writing-from-scratch.md](references/writing-from-scratch.md) | Greenfield multiloader defaults: project layout, the platform seam, modern registration, data-components-over-NBT, JSON gotchas, retained-mode rendering, the "it builds and loads" checklist. |
 | [useful-ribbits-case-study.md](references/useful-ribbits-case-study.md) | A real blow-by-blow port (1.20.1 Forge → 26.2 F/F/NF), including the chronological fix log and the deep-dive on the Forge pip-preview collapse. |
+| [bake-validate.md](references/bake-validate.md) | The **bake gate** validator source + how to recreate it to `scripts/bake_validate.py` and run it — the objective purple/invisible check (blockstate → model → parent → texture) with the TESTED/UNVERIFIED version rule. |
 
 **Rule:** triage before you port, settle the runtime model before you build,
 measure only with clean compiles, and treat green-compile / boot-to-Done / in-client

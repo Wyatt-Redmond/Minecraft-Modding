@@ -1,3 +1,47 @@
+# The bake gate — `bake_validate.py`
+
+The **bake gate** is the objective purple/invisible check from the validation stack: it
+resolves `blockstate → model → parent chain → textures` the way Minecraft's model baker
+does, across a layered resource view (loose folders and/or mod jars), and flags the assets
+that will bake **purple/invisible** in‑game.
+
+This skill ships the validator **as source in this file**, not as a pre‑placed executable.
+Recreate it once on your install, then run it like any script.
+
+## Recreate it on your install (one time)
+
+Write the code block below to `scripts/bake_validate.py` inside the skill folder, then run it.
+
+- Personal install → `~/.claude/skills/minecraft-modding/scripts/bake_validate.py`
+- Project install → `<project>/.claude/skills/minecraft-modding/scripts/bake_validate.py`
+
+Claude can do this for you: *"recreate the bake gate from references/bake-validate.md and run it against `<path>`."* It writes the file, then invokes it. Nothing else to install — it's stdlib‑only Python 3.
+
+## Run it
+
+```bash
+python scripts/bake_validate.py <pack-or-jar-or-mods-folder> --mc-version 26.3
+# add --json for machine-readable output
+python scripts/bake_validate.py --selftest        # runs its own assertions, no args
+```
+
+A `<path>` is a resource‑pack folder, an unzipped mod folder, a `.jar`, or a folder of jars.
+Exit code `0` = no hard failures, `1` = hard failures found, `2` = bad invocation.
+
+## Standing rule — TESTED vs UNVERIFIED
+
+The validator carries a *verified* era ruleset only for the versions in its
+`VERIFIED_VERSIONS` (currently 26.1–26.3, mirroring
+[version-baselines.md](version-baselines.md)). On any other `--mc-version` it runs its
+**universal** checks authoritatively but prints era‑specific findings as **UNVERIFIED
+advisories** — trust the universal results, but confirm each era‑gated finding against the
+target jar (the `javap` method) before acting. **If you verify a new version, add it to
+`VERIFIED_VERSIONS` so the trusted ground grows by evidence, never by guessing.** Never let a
+tool emit a confident verdict for a version it hasn't been proven on.
+
+## Source
+
+```python
 #!/usr/bin/env python3
 """
 bake_validate.py — the "bake gate" from the minecraft-modding skill, as a runnable tool.
@@ -328,3 +372,4 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+```
