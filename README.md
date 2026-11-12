@@ -69,7 +69,8 @@ Claude Code auto-discovers the skill from `SKILL.md` on the next session — no 
 └── skills/
     └── minecraft-modding/          # the skill (copy THIS for manual install)
         ├── SKILL.md
-        └── references/
+        ├── references/
+        └── scripts/                 # bundled bake-validator
 ```
 
 ## License
